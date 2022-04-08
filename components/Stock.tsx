@@ -1,48 +1,29 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import config from "../config/config.json";
+import { useEffect } from 'react';
+import { ScrollView, Text, View } from 'react-native';
+import { Base, Typography } from '../styles';
+import productModel from '../models/products';
 
-function StockList() {
-  const [products, setProducts] = useState([]);
+function StockList({products, setProducts}) {
+    useEffect(async () => {
+        setProducts(await productModel.getProducts());
+    }, []);
 
-  useEffect(() => {
-    fetch(`${config.base_url}/products?api_key=${config.api_key}`)
-      .then(response => response.json())
-      .then(result => setProducts(result.data));
-  }, []);
+    const list = products.map((product, index) => <Text style={Typography.normal} key={index}>{product.name} - {product.stock}</Text>);
 
-  const list = products.map((product, index) => <Text style={styles.lagerforteckning} key={index}>{ product.name } - { product.stock }</Text>);
-
-  return (
-    <View>
-      {list}
-    </View>
-  );
+    return (
+        <View>
+            {list}
+        </View>
+    );
 }
 
-export default function Stock() {
-  return (
-    <View>
-      <Text style={styles.lagernamn}>Lagerförteckning</Text>
-      <StockList />
-    </View>
-  );
+export default function Stock({products, setProducts}) {
+    return (
+        <ScrollView>
+            <View style={Base.scroll}>
+                <Text style={Typography.header4}>Lagerförteckning</Text>
+                <StockList products={products} setProducts={setProducts}/>
+            </View>
+        </ScrollView>
+    );
 }
-
-const styles = StyleSheet.create({
-  lagerforteckning: {
-    backgroundColor: '#444',
-    color: '#bbb',
-    fontSize: 12,
-    width: '100%',
-    paddingLeft: 12,
-    paddingRight: 12,
-  },
-  lagernamn: {
-    backgroundColor: '#444',
-    color: '#bbb',
-    fontSize: 24,
-    width: '100%',
-    padding: 12,
-  }
-});
