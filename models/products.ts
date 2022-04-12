@@ -1,4 +1,5 @@
 import config from "../config/config.json";
+import OrderItem from "../interfaces/order_item";
 
 const products = {
     getProducts: async function getProducts() {
@@ -7,7 +8,7 @@ const products = {
 
         return result.data;
     },
-    updateProduct: async function updateProduct(product: Partial<Object>) {
+    updateProduct: async function updateProduct(product: Partial<OrderItem>) {
         try {
             product.api_key = config.api_key;
 

@@ -4,7 +4,7 @@ import { Base, Typography } from '../styles';
 import orderModel from "../models/orders";
 
 export default function OrderList({ route, navigation }) {
-    const { reload } = route.params || true;
+    let { reload } = route.params || false;
     const [allOrders, setAllOrders] = useState([]);
 
     if (reload) {
@@ -13,6 +13,7 @@ export default function OrderList({ route, navigation }) {
 
     async function reloadOrders() {
         setAllOrders(await orderModel.getOrders());
+        route.params = false;
     }
 
     useEffect(() => {
