@@ -1,13 +1,16 @@
 import config from "../config/config.json";
-import Invoices from "../interfaces/invoices";
 import Order from "../interfaces/order";
+import OrderItem from "../interfaces/order_item";
+import OrderModel from "./orders";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const invoices = {
     getInvoices: async function getInvoices() {
+        const token = await AsyncStorage.getItem('token');
         const response = await fetch(`${config.base_url}/invoices?api_key=${config.api_key}`, {
             headers: {
-                'x-access-token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZDIyMzMyM2U2Mzg2MTNmYTk5MTFmYTk3ZjQxYmQ4NzkiLCJlbWFpbCI6InRlc3RAdGVzdC50ZXN0IiwiaWF0IjoxNjUwMjI4OTE5LCJleHAiOjE2NTAzMTUzMTl9.pSHBggjhcWUq49oaP6rnpP3y0WfKapmrOoPwYcjFQjo"
+                'x-access-token': token,
             },
             method: 'GET'
         });
@@ -15,19 +18,51 @@ const invoices = {
         return result.data;
     },
     addInvoice: async function addInvoice(order: Partial<Order>) {
-        // make order usable as invoice
+        let invoice = await invoices.orderToInvoice(order);
+        const token = await AsyncStorage.getItem('token');
         try {
             await fetch(`${config.base_url}/invoices?api_key=${config.api_key}`, {
-                body: JSON.stringify(order),
+                body: JSON.stringify(invoice),
                 headers: {
                     'content-type': 'application/json',
-                    'x-access-token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZDIyMzMyM2U2Mzg2MTNmYTk5MTFmYTk3ZjQxYmQ4NzkiLCJlbWFpbCI6InRlc3RAdGVzdC50ZXN0IiwiaWF0IjoxNjUwMjI4OTE5LCJleHAiOjE2NTAzMTUzMTl9.pSHBggjhcWUq49oaP6rnpP3y0WfKapmrOoPwYcjFQjo"
+                    'x-access-token': token,
                 },
                 method: 'POST'
             });
+            let changedOrder = {
+                id: order.id,
+                name: order.name,
+                status_id: 600,
+                api_key: config.api_key,
+            };
+            await OrderModel.updateOrder(changedOrder);
         } catch (error) {
             console.log("Could not add invoice");
         }
+    },
+    orderToInvoice: async function orderToInvoice(order: Partial<Order>) {
+        let price = await Promise.all(order.order_items.map(async (order_item: Partial<OrderItem>) => {
+            return order_item.price * order_item.amount
+        }));
+        let total_price = 0;
+        for (let i = 0; i < price.length; i++) {
+            total_price += price[i];
+        }
+        let date = new Date();
+        let duedate = new Date(date.setMonth(date.getMonth()+3));
+        let invoice = {
+            order_id: order.id,
+            name: order.name,
+            address: order.address,
+            zip: order.zip,
+            city: order.city,
+            country: order.country,
+            total_price: total_price,
+            creation_date: new Date().toLocaleDateString(),
+            due_date: duedate.toLocaleDateString(),
+            api_key: config.api_key,
+        };
+        return invoice;
     },
 };
 

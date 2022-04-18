@@ -10,6 +10,7 @@ const storage = {
             const jsonValue = JSON.stringify(tokenAndDate);
 
             await AsyncStorage.setItem('@token', jsonValue);
+            await AsyncStorage.setItem('token', token);
         } catch (e) {
             // saving error
         }

@@ -11,17 +11,17 @@ export default function DeliveriesList({ route, navigation, setProducts }) {
     let isDeliv = false;
 
     if (reload) {
-        reloadOrders();
+        reloadDeliveries();
     }
 
-    async function reloadOrders() {
+    async function reloadDeliveries() {
         setDeliveries(await deliveryModel.getDeliveries());
         setProducts(await productModel.getProducts());
         route.params = false;
     }
 
     useEffect(() => {
-        reloadOrders();
+        reloadDeliveries();
     }, []);
 
     const listOfDeliveries = deliveries.map((delivery, index) => <Text style={Typography.normal} key={index}>Id: {delivery.id} - Produktid: {delivery.product_id} - Mängd: {delivery.amount} - Inleveransdatum: {delivery.delivery_date} - Kommentar: {delivery.comment} - Produktnamn: {delivery.product_name}</Text>);

@@ -2,7 +2,6 @@ import { Button, View, ScrollView, Text } from "react-native";
 import { useEffect, useState } from "react";
 import invoiceModel from "../models/invoices";
 import { Base, Typography } from "../styles";
-import { DataTable } from "react-native-paper";
 import orderModel from "../models/orders";
 
 export default function InvoiceOrders({route, navigation}) {
@@ -31,11 +30,7 @@ export default function InvoiceOrders({route, navigation}) {
                         key={index}
                         onPress={() => {
                             invoiceModel.addInvoice(order);
-                            console.log(order);
-                            navigation.navigate('Fakturor', {
-                                screen: 'Fakturor',
-                                params: {reload: true},
-                        });
+                            navigation.navigate('Fakturor');
                         }}
                     />
                 </Text>)

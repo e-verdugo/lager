@@ -1,27 +1,19 @@
-import { Button, View, ScrollView, Text } from "react-native";
+import { Button, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import invoiceModel from "../models/invoices";
 import authModel from '../models/auth';
 import { Base, Typography } from "../styles";
 import { DataTable } from "react-native-paper";
 
-export default function Invoices({route, navigation}) {
+export default function Invoices({ navigation }) {
     const [allInvoices, setAllInvoices] = useState([]);
+
     useEffect(() => {
-        (async () => {
+        const update = navigation.addListener('focus', async () => {
             setAllInvoices(await invoiceModel.getInvoices())
-        })()
-    }, []);
-    let { reload } = route.params || false;
-
-    if (reload) {
-        reloadInvoices();
-    }
-
-    async function reloadInvoices() {
-        setAllInvoices(await invoiceModel.getInvoices());
-        route.params = false;
-    }
+        });
+        return update;
+    }, [navigation]);
 
     const table = allInvoices.map((invoice, index) => {
         return (
@@ -46,21 +38,16 @@ export default function Invoices({route, navigation}) {
                 </DataTable>
                 <Button
                     title="Fakturera orders"
-                    onPress={() => {
-                        navigation.navigate('Fakturera orders', {
-                            screen: 'Fakturera orders',
-                            params: {reload: true},
-                        });
+                    onPress={async () => {
+                        setAllInvoices(await invoiceModel.getInvoices());
+                        navigation.navigate('Fakturera orders', {params: {reload: true}});
                     }}
                 />
                 <Button
                     title="Log out"
                     onPress={() => {
                         authModel.logout();
-                        navigation.navigate('Lager', {
-                            screen: 'Lager',
-                            params: {isLoggedIn: false},
-                        });
+                        navigation.navigate('Lager');
                     }}
                 />
             </View>

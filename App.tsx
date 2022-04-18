@@ -49,7 +49,7 @@ export default function App() {
                     })}
                     >
                         <Tab.Screen name="Lager">
-                            {() => <Home products={products} setProducts={setProducts} setIsLoggedIn={setIsLoggedIn} route />}
+                            {() => <Home products={products} setProducts={setProducts} />}
                         </Tab.Screen>
                         <Tab.Screen name="Plock">
                             {() => <Pick products={products} setProducts={setProducts} />}
