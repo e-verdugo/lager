@@ -1,4 +1,4 @@
 {
-    "expo": "exp://ni-8ie.verdugo.lager.exp.direct:80",
+    "expo": "https://expo.dev/@verdugo/lager?serviceType=classic&distribution=expo-go",
     "github": "https://github.com/e-verdugo/lager.git"
 }
