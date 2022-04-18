@@ -4,21 +4,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import Home from './components/Home.tsx';
-import Pick from "./components/Pick.tsx";
-import Deliveries from "./components/Deliveries.tsx";
+import Home from './components/Home';
+import Pick from "./components/Pick";
+import Deliveries from "./components/Deliveries";
+import Auth from "./components/Auth";
+import Invoice from "./components/Invoice";
+import authModel from "./models/auth";
 import { Base, Typography } from './styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Tab = createBottomTabNavigator();
 const routeIcons = {
     "Lager": "home",
     "Plock": "list",
     "Inleverans": "car",
+    "Logga in": "key",
+    "Faktura": "card-outline",
 };
 
 export default function App() {
     const [products, setProducts] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState<Boolean>(false);
+
+    useEffect(() => {
+        (async () => {
+            setIsLoggedIn(await authModel.loggedIn())
+        })()
+    }, []);
 
     return (
         <SafeAreaView style={Base.container}>
@@ -37,7 +49,7 @@ export default function App() {
                     })}
                     >
                         <Tab.Screen name="Lager">
-                            {() => <Home products={products} setProducts={setProducts} />}
+                            {() => <Home products={products} setProducts={setProducts} setIsLoggedIn={setIsLoggedIn} route />}
                         </Tab.Screen>
                         <Tab.Screen name="Plock">
                             {() => <Pick products={products} setProducts={setProducts} />}
@@ -45,6 +57,12 @@ export default function App() {
                         <Tab.Screen name="Inleverans">
                             {() => <Deliveries products={products} setProducts={setProducts} />}
                         </Tab.Screen>
+                        {isLoggedIn ?
+                        <Tab.Screen name="Faktura" component={Invoice} /> :
+                        <Tab.Screen name="Logga in">
+                            {() => <Auth setIsLoggedIn={setIsLoggedIn} />}
+                        </Tab.Screen>
+                        }
                     </Tab.Navigator>
                 </NavigationContainer>
                 <StatusBar style="auto" />
