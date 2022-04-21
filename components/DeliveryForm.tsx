@@ -104,8 +104,10 @@ function ProductDropDown(props) {
     const [products, setProducts] = useState([]);
     let productsHash: any = {};
 
-    useEffect(async () => {
-        setProducts(await productModel.getProducts());
+    useEffect(() => {
+        (async () => {
+            setProducts(await productModel.getProducts())
+        })()
     }, []);
 
     const itemsList = products.map((prod, index) => {

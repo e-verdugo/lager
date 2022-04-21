@@ -9,6 +9,7 @@ import Pick from "./components/Pick";
 import Deliveries from "./components/Deliveries";
 import Auth from "./components/Auth";
 import Invoice from "./components/Invoice";
+import Map from "./components/Map";
 import authModel from "./models/auth";
 import { Base, Typography } from './styles';
 import { useState, useEffect } from 'react';
@@ -20,6 +21,7 @@ const routeIcons = {
     "Inleverans": "car",
     "Logga in": "key",
     "Faktura": "card-outline",
+    "Skicka": "map",
 };
 
 export default function App() {
@@ -56,6 +58,9 @@ export default function App() {
                         </Tab.Screen>
                         <Tab.Screen name="Inleverans">
                             {() => <Deliveries products={products} setProducts={setProducts} />}
+                        </Tab.Screen>
+                        <Tab.Screen name="Skicka">
+                            {() => <Map products={products} />}
                         </Tab.Screen>
                         {isLoggedIn ?
                         <Tab.Screen name="Faktura" component={Invoice} /> :

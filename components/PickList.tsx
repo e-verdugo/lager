@@ -27,10 +27,8 @@ export default function PickList({ route, navigation, setProducts }) {
         }
     });
 
-    const enough = order.order_items.map((item, index) => {
-        return <Button title={item.name + " finns på lager. Plocka order?"} onPress={pick} key={index}/>
-    });
-    const notEnough = (<Text style={Typography.normal}>För få artiklar på lager.</Text>)
+    const enough = (<Button title={"Allt finns på lager. Plocka order?"} onPress={pick}/>);
+    const notEnough = (<Text style={Typography.normal}>För få artiklar på lager.</Text>);
 
     if (isEnough) {
         canPick = enough;
