@@ -6,6 +6,7 @@ import productModel from "../models/products";
 import deliveryModel from "../models/deliveries";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform, ScrollView, Text, TextInput, Button, View } from "react-native";
+import { showMessage } from 'react-native-flash-message';
 
 export default function DeliveryForm({ navigation }) {
     const [delivery, setDelivery] = useState<Partial<Delivery>>({});
@@ -13,15 +14,20 @@ export default function DeliveryForm({ navigation }) {
 
     async function addDelivery() {
         if (delivery.delivery_date == null) {
-            delivery.delivery_date = "01/01/00";
+            showMessage({
+                message: "Saknas",
+                description: "Datum saknas",
+                type: "warning",
+            });
+        } else {
+            await deliveryModel.updateDeliveries(delivery);
+            const updatedProduct = {
+                ...currentProduct,
+                stock: (currentProduct.stock || 0) + (delivery.amount || 0)
+            };
+            await productModel.updateProduct(updatedProduct);
+            navigation.navigate("List", { reload: true });
         }
-        await deliveryModel.updateDeliveries(delivery);
-        const updatedProduct = {
-            ...currentProduct,
-            stock: (currentProduct.stock || 0) + (delivery.amount || 0)
-        };
-        await productModel.updateProduct(updatedProduct);
-        navigation.navigate("List", { reload: true });
     }
 
     return (

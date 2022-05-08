@@ -13,6 +13,7 @@ import Map from "./components/Map";
 import authModel from "./models/auth";
 import { Base, Typography } from './styles';
 import { useState, useEffect } from 'react';
+import FlashMessage from 'react-native-flash-message';
 
 const Tab = createBottomTabNavigator();
 const routeIcons = {
@@ -71,6 +72,7 @@ export default function App() {
                     </Tab.Navigator>
                 </NavigationContainer>
                 <StatusBar style="auto" />
+                <FlashMessage position="top" />
             </View>
         </SafeAreaView>
     );
